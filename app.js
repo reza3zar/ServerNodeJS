@@ -8,8 +8,8 @@ const mongoose=require('mongoose');
 require('dotenv').config();
 
 //call cors
-// const cors=require('cors');
-// app.use(cors);
+const cors=require('cors');
+app.use(cors);
 
 //call Post & login router
 const postRouter=require('./routes/posts');
