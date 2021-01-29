@@ -54,7 +54,10 @@ router.get('/:postId', async (req,res)=>{
 
 router.delete('/:postId', async (req,res)=>{
     try {
-       const deleteItem=await Post.deleteOne({_id:req.params.postId})
+       const deleteItem=await Post.deleteOne({_id:req.params.postId});
+
+       if(!deleteItem) return res.status(400).send({errorMessage:'POST not found !!!'})
+
         res.json({result:deleteItem})
     } catch (error) {
         res.json({message:error})
