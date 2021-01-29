@@ -37,8 +37,10 @@ const port = process.env.PORT || 3000
 //   res.end('<h1>Hello World</h1>');
 // });
 
-server.listen(port,() => {
-    app.use('/posts',postRouter); 
-app.use('/login',loginRouter); 
-  console.log(`Server running at port `+port);
-});
+// server.listen(port,() => {
+ 
+//   console.log(`Server running at port `+port);
+// });
+app.listen(port, () => {
+    console.log(`OK!`)
+  })
