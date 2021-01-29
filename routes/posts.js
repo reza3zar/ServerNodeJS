@@ -35,15 +35,15 @@ router.get('/', authInterceptor ,async (req,res)=>{
 
 router.get('/:postId', async (req,res)=>{
     try {
-        const accessToThePost=  accessToPost(req.body);
-        if (accessToThePost && accessToThePost.error) return res.status(400).send({errorMessage:'Access Denied!!!'});
+        // const accessToThePost=  accessToPost(req.body);
+        // if (accessToThePost && accessToThePost.error) return res.status(400).send({errorMessage:'Access Denied!!!'});
 
         const postItem=await Post.findById(req.params.postId);
         if(!postItem) return res.status(400).send('post not find!');
 
 
-        const isValidPassword=await bcrypyjs.compare(req.body.password,postItem.password);
-        if(!isValidPassword) return res.status(400).send({errorMessage:'password is wrong!!!'});
+        // const isValidPassword=await bcrypyjs.compare(req.body.password,postItem.password);
+        // if(!isValidPassword) return res.status(400).send({errorMessage:'password is wrong!!!'});
 
         res.json({result:postItem})
     } catch (error) {
