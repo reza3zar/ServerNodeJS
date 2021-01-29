@@ -20,7 +20,7 @@ app.use('/login',loginRouter);
 
 
 //connect to mongoose DB.
-mongoose.connect(process.env.DB_CONNECTION_ONLINE,{useNewUrlParser: true, useUnifiedTopology: true},(()=>{
+ mongoose.connect('mongodb+srv://sa:400141@cluster0.0jhir.mongodb.net/postDB?retryWrites=true&w=majority&ssl=true',{useNewUrlParser: true, useUnifiedTopology: true},(()=>{
     console.log('DB is running...')
 }));
 

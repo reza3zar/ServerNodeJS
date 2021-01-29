@@ -19,9 +19,9 @@ router.use(function(req, res, next) {
 
 
 
-router.use((req,res,next)=>{
-    next();
-})
+// router.use((req,res,next)=>{
+//     next();
+// })
  
 router.get('/', authInterceptor ,async (req,res)=>{
     try {

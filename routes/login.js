@@ -16,12 +16,14 @@ const {generateCryptData}=require('../utilities/cryptoHandler');
 
 router.post('/',async (req,res)=>{
     try {
-
         const loginValidationResult= loginValidation(req.body);
 
         if(loginValidationResult && loginValidationResult.error) return res.status(400).send(loginValidationResult);
+        console.log('1')
 
         const findLoginInformation= await login.findOne({userName:req.body.userName});
+        console.log('2')
+
         if(!findLoginInformation) return res.status(400).send({errorMessage:'User not found!!!'});
        
 
@@ -37,7 +39,7 @@ router.post('/',async (req,res)=>{
         return res.header('auth-token',jwt).send({email:findLoginInformation.email})
         
     } catch (error) {
-        
+        console.log(error)
     }
 })
 
