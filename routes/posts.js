@@ -47,6 +47,7 @@ router.get('/:postId', async (req,res)=>{
 
         res.json({result:postItem})
     } catch (error) {
+        console.log(error)
         res.json({message:error})
     }
 });
