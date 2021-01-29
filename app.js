@@ -17,7 +17,11 @@ const loginRouter=require('./routes/login');
 
 app.use('/posts',postRouter); 
 app.use('/login',loginRouter); 
-
+app.use('/',(req,res)=>{
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/html');
+  res.end('<h1 >Wellcome to my posty web API</h1>');
+});
 
 //connect to mongoose DB.
  mongoose.connect('mongodb+srv://sa:400141@cluster0.0jhir.mongodb.net/postDB?retryWrites=true&w=majority&ssl=true',{useNewUrlParser: true, useUnifiedTopology: true},(()=>{
@@ -28,15 +32,9 @@ app.use('/login',loginRouter);
 
 //run app in specefic port...
 // app.listen(3000)
-const http = require('http');
+ 
 const port = process.env.PORT || 3000
-
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/html');
-  res.end('<h1 >Wellcome to my posty web API</h1>');
-});
-
+ 
 // server.listen(port,() => {
  
 //   console.log(`Server running at port `+port);
