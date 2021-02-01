@@ -13,7 +13,12 @@ require('dotenv').config(); //call cors
 
 var cors = require('cors');
 
-app.use(cors); //call Post & login router
+var corsOptions = {
+  origin: 'http://rezablog.herokuapp.com',
+  optionsSuccessStatus: 200 // For legacy browser support
+
+};
+app.use(cors(corsOptions)); //call Post & login router
 
 var postRouter = require('./routes/posts');
 
