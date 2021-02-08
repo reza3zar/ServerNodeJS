@@ -15,16 +15,21 @@ var mongoose = require('mongoose'); //call env variables
 
 require('dotenv').config(); //call morgan for log only in development environment 
 //HTTP request logger middleware for node.js
+// var morgan = require('morgan');
+// var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+// app.use(morgan('dev', { stream: accessLogStream }))
+// mongoose-morgan
 
 
-var morgan = require('morgan');
+var mongooseMorgan = require('mongoose-morgan'); // Logger
 
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
-  flags: 'a'
-});
-app.use(morgan('dev', {
-  stream: accessLogStream
-})); //call cors
+
+app.use(mongooseMorgan({
+  connectionString: 'mongodb+srv://sa:400141@cluster0.0jhir.mongodb.net/logs-db?retryWrites=true&w=majority&ssl=true'
+})); // run
+
+app.listen(port);
+console.log('works... ' + port); //call cors
 
 var cors = require('cors');
 
