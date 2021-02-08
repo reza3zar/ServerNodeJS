@@ -22,14 +22,20 @@ require('dotenv').config(); //call morgan for log only in development environmen
 
 
 var mongooseMorgan = require('mongoose-morgan'); // Logger
+// Mongoose-morgan
+//TODO: config DB
 
 
 app.use(mongooseMorgan({
-  connectionString: 'mongodb+srv://sa:400141@cluster0.0jhir.mongodb.net/logs-db?retryWrites=true&w=majority&ssl=true'
-})); // run
-
-app.listen(port);
-console.log('works... ' + port); //call cors
+  collection: 'error_logger',
+  connectionString: 'mongodb+srv://sa:400141@cluster0.0jhir.mongodb.net/postDB?retryWrites=true&w=majority&ssl=true',
+  user: 'sa',
+  pass: '400141'
+}, {
+  skip: function skip(req, res) {
+    return res.statusCode < 100;
+  }
+}, 'combined')); //call cors
 
 var cors = require('cors');
 
