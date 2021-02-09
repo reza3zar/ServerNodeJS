@@ -4,7 +4,8 @@ const Joi=require("@hapi/joi");
 const schema={
         email:Joi.string(),
         userName:Joi.string().min(4).max(30),
-        password:Joi.string().min(6).max(20)
+        password:Joi.string().min(6).max(20),
+        categorys:Joi.array()
 }
 
  

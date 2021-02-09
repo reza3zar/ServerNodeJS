@@ -1,6 +1,7 @@
 const mongoose=require('mongoose');
 
 const postSchema=mongoose.Schema({
+    // _id:mongoose.Schema.Types.ObjectId,
     id:{
         type:Number,
         required:true
@@ -25,7 +26,13 @@ const postSchema=mongoose.Schema({
     },
     password:{
         type:String
-    }
+    },
+    categorys:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Category",
+        required:true
+
+    }]
 
 });
 

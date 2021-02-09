@@ -7,7 +7,9 @@ const {postValidation} = require('../validations/postValidation');
 const bcrypyjs=require('bcryptjs');
 
 const {generateCryptData}=require('../utilities/cryptoHandler')
-const authInterceptor=require('../interceptore/authInterceptor')
+const authInterceptor=require('../interceptore/authInterceptor');
+const { Mongoose } = require('mongoose');
+const category = require('../models/category');
 // const {postValidation}=require('../validations/postValidation')
 // router.use(function(req, res, next) {
 //     res.header("Access-Control-Allow-Origin", "*");
@@ -38,12 +40,23 @@ router.get('/:postId', async (req,res)=>{
 
         const postItem=await Post.findById(req.params.postId);
         if(!postItem) return res.status(400).send('post not find!');
-
-
+        let categoryCollection=null;
+        if(postItem.categorys){
+          categoryCollection= await  category.find({  _id: { $in: postItem.categorys }});
+        }
         // const isValidPassword=await bcrypyjs.compare(req.body.password,postItem.password);
         // if(!isValidPassword) return res.status(400).send({errorMessage:'password is wrong!!!'});
 
-        res.json({result:postItem})
+       
+
+        res.json({post:{
+            title:postItem.title,
+            body:postItem.body,
+            categorys:categoryCollection,
+            _id:postItem._id
+        }});
+
+
     } catch (error) {
         console.log(error)
         res.json({message:error})
@@ -56,6 +69,8 @@ router.delete('/:postId', async (req,res)=>{
 
        if(!findPost) return res.status(400).send({errorMessage:'POST not found !!!'})
        const deleteItem=await Post.deleteOne({_id:req.params.postId});
+
+
 
         res.json({result:deleteItem})
     } catch (error) {
@@ -79,14 +94,16 @@ router.post('/', async (req,res)=>{
       const postInDB=await Post.findOne({title:req.body.title});
       if(postInDB ) return res.status(400).send({errorMessage:"you cannot create this post because it is exist in DB!!!"})
 
-      console.log(generateCryptData)
+      console.log(req.body.categorys)
       let passwordOfPost=await generateCryptData(req.body.password);
         const postInstance=new Post({
+            // _id:new Mongoose.Types.ObjectId(),
             id:req.body.id,
             userId:req.body.userId,
             title:req.body.title,
             body:req.body.body,
-            password:  passwordOfPost
+            password:  passwordOfPost,
+            categorys:req.body.categorys
         });
 
         try {
@@ -94,6 +111,7 @@ router.post('/', async (req,res)=>{
             res.json({post:{
                 title:savePost.title,
                 body:savePost.body,
+                categorys:savePost.categorys,
                 _id:savePost._id
             }});
         } catch (error) {

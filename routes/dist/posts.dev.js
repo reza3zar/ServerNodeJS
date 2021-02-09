@@ -16,7 +16,12 @@ var bcrypyjs = require('bcryptjs');
 var _require2 = require('../utilities/cryptoHandler'),
     generateCryptData = _require2.generateCryptData;
 
-var authInterceptor = require('../interceptore/authInterceptor'); // const {postValidation}=require('../validations/postValidation')
+var authInterceptor = require('../interceptore/authInterceptor');
+
+var _require3 = require('mongoose'),
+    Mongoose = _require3.Mongoose;
+
+var category = require('../models/category'); // const {postValidation}=require('../validations/postValidation')
 // router.use(function(req, res, next) {
 //     res.header("Access-Control-Allow-Origin", "*");
 //     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -61,7 +66,7 @@ router.get('/', authInterceptor, function _callee(req, res) {
   }, null, null, [[0, 7]]);
 });
 router.get('/:postId', function _callee2(req, res) {
-  var postItem;
+  var postItem, categoryCollection;
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
@@ -81,28 +86,51 @@ router.get('/:postId', function _callee2(req, res) {
           return _context2.abrupt("return", res.status(400).send('post not find!'));
 
         case 6:
+          categoryCollection = null;
+
+          if (!postItem.categorys) {
+            _context2.next = 11;
+            break;
+          }
+
+          _context2.next = 10;
+          return regeneratorRuntime.awrap(category.find({
+            _id: {
+              $in: postItem.categorys
+            }
+          }));
+
+        case 10:
+          categoryCollection = _context2.sent;
+
+        case 11:
           // const isValidPassword=await bcrypyjs.compare(req.body.password,postItem.password);
           // if(!isValidPassword) return res.status(400).send({errorMessage:'password is wrong!!!'});
           res.json({
-            result: postItem
+            post: {
+              title: postItem.title,
+              body: postItem.body,
+              categorys: categoryCollection,
+              _id: postItem._id
+            }
           });
-          _context2.next = 13;
+          _context2.next = 18;
           break;
 
-        case 9:
-          _context2.prev = 9;
+        case 14:
+          _context2.prev = 14;
           _context2.t0 = _context2["catch"](0);
           console.log(_context2.t0);
           res.json({
             message: _context2.t0
           });
 
-        case 13:
+        case 18:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 9]]);
+  }, null, null, [[0, 14]]);
 });
 router["delete"]('/:postId', function _callee3(req, res) {
   var findPost, deleteItem;
@@ -226,18 +254,20 @@ router.post('/', function _callee5(req, res) {
           }));
 
         case 8:
-          console.log(generateCryptData);
+          console.log(req.body.categorys);
           _context5.next = 11;
           return regeneratorRuntime.awrap(generateCryptData(req.body.password));
 
         case 11:
           passwordOfPost = _context5.sent;
           postInstance = new Post({
+            // _id:new Mongoose.Types.ObjectId(),
             id: req.body.id,
             userId: req.body.userId,
             title: req.body.title,
             body: req.body.body,
-            password: passwordOfPost
+            password: passwordOfPost,
+            categorys: req.body.categorys
           });
           _context5.prev = 13;
           _context5.next = 16;
@@ -249,6 +279,7 @@ router.post('/', function _callee5(req, res) {
             post: {
               title: savePost.title,
               body: savePost.body,
+              categorys: savePost.categorys,
               _id: savePost._id
             }
           });

@@ -24,7 +24,7 @@ var mongooseMorgan = require('mongoose-morgan');
 // Logger
  
 // Mongoose-morgan
-//TODO: config DB
+//TODO: config DB && Skip code < 400
 app.use(mongooseMorgan({
   collection: 'error_logger',
   connectionString: 'mongodb+srv://sa:400141@cluster0.0jhir.mongodb.net/postDB?retryWrites=true&w=majority&ssl=true',
@@ -53,9 +53,12 @@ app.use(cors(corsOptions));
 //call Post & login router
 const postRouter=require('./routes/posts');
 const loginRouter=require('./routes/login');
+const categoryRouter=require('./routes/category')
 
 app.use('/posts',postRouter); 
 app.use('/login',loginRouter); 
+app.use('/category',categoryRouter); 
+
 // app.use('/',(req,res)=>{
 //   res.statusCode = 200;
 //   res.setHeader('Content-Type', 'text/html');

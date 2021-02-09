@@ -23,7 +23,7 @@ require('dotenv').config(); //call morgan for log only in development environmen
 
 var mongooseMorgan = require('mongoose-morgan'); // Logger
 // Mongoose-morgan
-//TODO: config DB
+//TODO: config DB && Skip code < 400
 
 
 app.use(mongooseMorgan({
@@ -50,8 +50,11 @@ var postRouter = require('./routes/posts');
 
 var loginRouter = require('./routes/login');
 
+var categoryRouter = require('./routes/category');
+
 app.use('/posts', postRouter);
-app.use('/login', loginRouter); // app.use('/',(req,res)=>{
+app.use('/login', loginRouter);
+app.use('/category', categoryRouter); // app.use('/',(req,res)=>{
 //   res.statusCode = 200;
 //   res.setHeader('Content-Type', 'text/html');
 //   res.end('<h1 >Wellcome to my posty web API</h1>');

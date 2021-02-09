@@ -7,6 +7,7 @@ const schema={
     userId:Joi.number().required(),
     id:Joi.number().required(),
     password:Joi.string()
+    ,categorys:Joi.array()
 }
 
 const schemaAccessToPost={
