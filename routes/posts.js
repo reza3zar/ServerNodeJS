@@ -10,22 +10,51 @@ const {generateCryptData}=require('../utilities/cryptoHandler')
 const authInterceptor=require('../interceptore/authInterceptor');
 const { Mongoose } = require('mongoose');
 const category = require('../models/category');
-// const {postValidation}=require('../validations/postValidation')
-// router.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     next();
-//   });
+ 
+//multer
+var multer  = require('multer');
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './post-uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now()+'.jpg')
+    }
+  });
 
+  function fileFilter (req, file, cb) {
+    // The function should call `cb` with a boolean
+    // to indicate if the file should be accepted
+    try {
+        console.log(file.mimetype)
+        if(file.mimetype==='image/jpeg')
+            // To accept the file pass `true`, like so:
+            cb(null, true);
+        else
+            // To reject this file pass `false`, like so:
+            cb(new Error('file format is not jpeg !!!'), false);
+    } catch (error) {
+        // You can always pass an error if something goes wrong:
+        cb(new Error('fileFilter multer has an error'))
+    }
+   
+  }
 
-// router.use((req,res,next)=>{
-//     next();
-// })
+  var upload = multer({ storage: storage, limits:{
+      fileSize:1024*1024*4
+  },fileFilter:fileFilter })
+ 
  
 router.get('/', authInterceptor ,async (req,res)=>{
     try {
-        const postCollection=await Post.find();
+        const postCollection=await Post.find()
+        // populate('Category'). // only works if we pushed refs to children
+        // exec(function (err, person) {
+        //   if (err) return handleError(err);
+        //   console.log(person);
+        // });
+       // console.log(postCollection)
         res.json({result:postCollection});
     } catch (error) {
         console.log(error)
@@ -53,6 +82,7 @@ router.get('/:postId', async (req,res)=>{
             title:postItem.title,
             body:postItem.body,
             categorys:categoryCollection,
+            postImage:postItem.postImage,
             _id:postItem._id
         }});
 
@@ -87,15 +117,18 @@ router.patch('/:postId', async (req,res)=>{
     }
 });
 
-router.post('/', async (req,res)=>{
+router.post('/', upload.single('postImage'), async (req,res)=>{
      const validationResult = postValidation(req.body);
+
      if(validationResult && validationResult.error) return res.status(400).send(validationResult) 
      
       const postInDB=await Post.findOne({title:req.body.title});
-      if(postInDB ) return res.status(400).send({errorMessage:"you cannot create this post because it is exist in DB!!!"})
+      if(postInDB ) return res.status(400).send({errorMessage:"you cannot create this post because it is exist in DB!!!"});
 
-      console.log(req.body.categorys)
-      let passwordOfPost=await generateCryptData(req.body.password);
+      let passwordOfPost=null;
+      if(req.body.password)
+        passwordOfPost=await generateCryptData(req.body.password );
+
         const postInstance=new Post({
             // _id:new Mongoose.Types.ObjectId(),
             id:req.body.id,
@@ -103,7 +136,8 @@ router.post('/', async (req,res)=>{
             title:req.body.title,
             body:req.body.body,
             password:  passwordOfPost,
-            categorys:req.body.categorys
+            categorys:req.body.categorys,
+            postImage:req.file.path
         });
 
         try {

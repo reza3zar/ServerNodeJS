@@ -59,6 +59,10 @@ app.use('/posts',postRouter);
 app.use('/login',loginRouter); 
 app.use('/category',categoryRouter); 
 
+
+// public folder post-uploads uses when upload a post and you want to return image that is uploaded with user
+app.use('/post-uploads',express.static('post-uploads'))
+
 // app.use('/',(req,res)=>{
 //   res.statusCode = 200;
 //   res.setHeader('Content-Type', 'text/html');

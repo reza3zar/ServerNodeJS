@@ -21,17 +21,41 @@ var authInterceptor = require('../interceptore/authInterceptor');
 var _require3 = require('mongoose'),
     Mongoose = _require3.Mongoose;
 
-var category = require('../models/category'); // const {postValidation}=require('../validations/postValidation')
-// router.use(function(req, res, next) {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//     next();
-//   });
-// router.use((req,res,next)=>{
-//     next();
-// })
+var category = require('../models/category'); //multer
 
 
+var multer = require('multer');
+
+var storage = multer.diskStorage({
+  destination: function destination(req, file, cb) {
+    cb(null, './post-uploads');
+  },
+  filename: function filename(req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + '.jpg');
+  }
+});
+
+function fileFilter(req, file, cb) {
+  // The function should call `cb` with a boolean
+  // to indicate if the file should be accepted
+  try {
+    console.log(file.mimetype);
+    if (file.mimetype === 'image/jpeg') // To accept the file pass `true`, like so:
+      cb(null, true);else // To reject this file pass `false`, like so:
+      cb(new Error('file format is not jpeg !!!'), false);
+  } catch (error) {
+    // You can always pass an error if something goes wrong:
+    cb(new Error('fileFilter multer has an error'));
+  }
+}
+
+var upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 4
+  },
+  fileFilter: fileFilter
+});
 router.get('/', authInterceptor, function _callee(req, res) {
   var postCollection;
   return regeneratorRuntime.async(function _callee$(_context) {
@@ -44,6 +68,12 @@ router.get('/', authInterceptor, function _callee(req, res) {
 
         case 3:
           postCollection = _context.sent;
+          // populate('Category'). // only works if we pushed refs to children
+          // exec(function (err, person) {
+          //   if (err) return handleError(err);
+          //   console.log(person);
+          // });
+          // console.log(postCollection)
           res.json({
             result: postCollection
           });
@@ -111,6 +141,7 @@ router.get('/:postId', function _callee2(req, res) {
               title: postItem.title,
               body: postItem.body,
               categorys: categoryCollection,
+              postImage: postItem.postImage,
               _id: postItem._id
             }
           });
@@ -220,7 +251,7 @@ router.patch('/:postId', function _callee4(req, res) {
     }
   }, null, null, [[0, 7]]);
 });
-router.post('/', function _callee5(req, res) {
+router.post('/', upload.single('postImage'), function _callee5(req, res) {
   var validationResult, postInDB, passwordOfPost, postInstance, savePost;
   return regeneratorRuntime.async(function _callee5$(_context5) {
     while (1) {
@@ -254,12 +285,20 @@ router.post('/', function _callee5(req, res) {
           }));
 
         case 8:
-          console.log(req.body.categorys);
-          _context5.next = 11;
+          passwordOfPost = null;
+
+          if (!req.body.password) {
+            _context5.next = 13;
+            break;
+          }
+
+          _context5.next = 12;
           return regeneratorRuntime.awrap(generateCryptData(req.body.password));
 
-        case 11:
+        case 12:
           passwordOfPost = _context5.sent;
+
+        case 13:
           postInstance = new Post({
             // _id:new Mongoose.Types.ObjectId(),
             id: req.body.id,
@@ -267,13 +306,14 @@ router.post('/', function _callee5(req, res) {
             title: req.body.title,
             body: req.body.body,
             password: passwordOfPost,
-            categorys: req.body.categorys
+            categorys: req.body.categorys,
+            postImage: req.file.path
           });
-          _context5.prev = 13;
-          _context5.next = 16;
+          _context5.prev = 14;
+          _context5.next = 17;
           return regeneratorRuntime.awrap(postInstance.save());
 
-        case 16:
+        case 17:
           savePost = _context5.sent;
           res.json({
             post: {
@@ -283,19 +323,19 @@ router.post('/', function _callee5(req, res) {
               _id: savePost._id
             }
           });
-          _context5.next = 23;
+          _context5.next = 24;
           break;
 
-        case 20:
-          _context5.prev = 20;
-          _context5.t0 = _context5["catch"](13);
+        case 21:
+          _context5.prev = 21;
+          _context5.t0 = _context5["catch"](14);
           res.status(400).send(_context5.t0);
 
-        case 23:
+        case 24:
         case "end":
           return _context5.stop();
       }
     }
-  }, null, null, [[13, 20]]);
+  }, null, null, [[14, 21]]);
 });
 module.exports = router;

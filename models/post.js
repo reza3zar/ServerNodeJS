@@ -31,8 +31,10 @@ const postSchema=mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Category",
         required:true
-
-    }]
+    }],
+    postImage:{
+        type:String,
+    }
 
 });
 

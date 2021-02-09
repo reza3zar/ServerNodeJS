@@ -33,6 +33,9 @@ var postSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true
-  }]
+  }],
+  postImage: {
+    type: String
+  }
 });
 module.exports = mongoose.model('Posts', postSchema);
