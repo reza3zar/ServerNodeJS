@@ -338,4 +338,31 @@ router.post('/', upload.single('postImage'), function _callee5(req, res) {
     }
   }, null, null, [[14, 21]]);
 });
+router["delete"]('/', function _callee6(req, res) {
+  var result;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.prev = 0;
+          _context6.next = 3;
+          return regeneratorRuntime.awrap(Post.remove());
+
+        case 3:
+          result = _context6.sent;
+          return _context6.abrupt("return", res.status(200).json({
+            message: result
+          }));
+
+        case 7:
+          _context6.prev = 7;
+          _context6.t0 = _context6["catch"](0);
+
+        case 9:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  }, null, null, [[0, 7]]);
+});
 module.exports = router;

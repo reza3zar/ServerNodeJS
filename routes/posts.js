@@ -154,5 +154,14 @@ router.post('/', upload.single('postImage'), async (req,res)=>{
 
  });
 
+ router.delete('/',async(req,res)=>{
+     try {
+         const result=await Post.remove();
+         return res.status(200).json({message:result});
+     } catch (error) {
+         
+     }
+ })
+
 module.exports=router;
 
