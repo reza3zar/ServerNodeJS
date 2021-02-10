@@ -54,7 +54,7 @@ router.post('/', async (req,res)=>{
  
         //TODO: check base on id 
       const categoryInDB=await Category.findOne({name:req.body.name });
-      if(categoryInDB ) return res.status(400).send({errorMessage:"you cannot create this category because it is exist in DB!!!"})
+      if(categoryInDB ) return res.status(409).send({errorMessage:"you cannot create this category because it is exist in DB!!!"})
 
         const categoryInstance=new Category({
             // _id:new Mongoose.Types.ObjectId(),

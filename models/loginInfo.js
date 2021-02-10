@@ -14,7 +14,8 @@ const loginInfoSchema={
         max:20
     },
     email:{
-        type:String
+        type:String, unique:true,
+        // match:/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
     }
 }
 

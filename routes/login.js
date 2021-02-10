@@ -45,13 +45,17 @@ router.post('/',async (req,res)=>{
 
 router.post('/register',async (req,res)=>{
     try {
+        
+        if(Object.keys(req.body).length === 0){
+             return res.status(400).send({errorMessage:'please fill mandatory params !!!'});
+        }
         const registerValidationResult= registerValidation(req.body);
         
 
         if(registerValidationResult && registerValidationResult.error) return res.status(400).send(registerValidationResult);
 
         const findLoginInformation= await login.findOne({userName:req.body.userName});
-        if(findLoginInformation) return res.status(400).send({errorMessage:'User is already exist !!!'});
+        if(findLoginInformation) return res.status(409).send({errorMessage:'User is already exist !!!'});
 
         let cryptoPassword=await generateCryptData (req.body.password);
 
@@ -61,9 +65,11 @@ router.post('/register',async (req,res)=>{
             password:cryptoPassword,
 
         })
-        console.log(newUserInformation)
+        console.log('newUserInformation:',newUserInformation)
 
         const registerUserInformation=await  newUserInformation.save();
+        console.log('registerUserInformation:',registerUserInformation)
+        
         return res.send({_id:registerUserInformation._id})
 
 

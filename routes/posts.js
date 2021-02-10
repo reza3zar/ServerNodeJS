@@ -123,7 +123,7 @@ router.post('/', upload.single('postImage'), async (req,res)=>{
      if(validationResult && validationResult.error) return res.status(400).send(validationResult) 
      
       const postInDB=await Post.findOne({title:req.body.title});
-      if(postInDB ) return res.status(400).send({errorMessage:"you cannot create this post because it is exist in DB!!!"});
+      if(postInDB ) return res.status(409).send({errorMessage:"you cannot create this post because it is exist in DB!!!"});
 
       let passwordOfPost=null;
       if(req.body.password)
