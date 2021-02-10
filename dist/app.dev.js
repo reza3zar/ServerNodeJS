@@ -40,7 +40,7 @@ app.use(mongooseMorgan({
 var cors = require('cors');
 
 var corsOptions = {
-  origin: 'http://rezablog.herokuapp.com',
+  origin: ['http://rezablog.herokuapp.com', 'http://localhost:4200'],
   optionsSuccessStatus: 200 // For legacy browser support
 
 };
